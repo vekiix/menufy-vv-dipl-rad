@@ -1,0 +1,18 @@
+version: '4'
+services:
+  db:
+    image: postgres:latest
+    container_name: mysql-container
+    environment:
+      POSTGRES_ROOT_PASSWORD: root
+      POSTGRES_DATABASE: auth-service
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_SCHEMA: auth-service
+    ports:
+      - "3306:5432"
+    volumes:
+      - db_data:/var/lib/psql
+
+volumes:
+  db_data:

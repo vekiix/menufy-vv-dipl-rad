@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/menufy
+    schema: auth_service_schema
+    username: user
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: auth_service_schema
+server:
+  port: 9000
