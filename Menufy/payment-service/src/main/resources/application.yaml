@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: payment-service
+  data:
+    mongodb:
+    uri: mongodb://root:root@localhost:5433/menufy?authSource=admin # MongoDB connection URI
+    database: payment-service
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  port: 9003
+
+payment-service:
+  keks-pay:
+    success-url: localhost
+    fail-ur: localhostFail
+  ws-pay:
+    success-url: localhost
+    fail-ur: localhostFail

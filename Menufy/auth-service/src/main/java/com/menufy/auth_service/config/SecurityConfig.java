@@ -4,6 +4,7 @@ import com.menufy.auth_service.service.AuthTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,10 +36,17 @@ public class SecurityConfig {
         return http
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request -> {
-                    request
-                            .requestMatchers("/login", "/login/*").permitAll()
-                            .anyRequest().permitAll();
+                .authorizeHttpRequests(request -> {request
+                        .requestMatchers(HttpMethod.GET, "/company", "/user").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/company", "/user").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/company", "/user").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/company", "/user").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/table").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.PUT, "/table").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.POST, "/table").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/table").hasAuthority("USER")
+                        .requestMatchers("/login", "/login/*").permitAll()
+                        .anyRequest().authenticated();
                 })
                 .addFilterBefore(new UsernamePasswordAuthenticationFilter(authTokenService), BasicAuthenticationFilter.class)
                 .addFilterBefore(new GetParametersAuthenticationFilter(authTokenService), BasicAuthenticationFilter.class)

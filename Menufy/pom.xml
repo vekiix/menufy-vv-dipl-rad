@@ -10,13 +10,19 @@
     <packaging>pom</packaging>
     <modules>
         <module>
+            api-gateway
+        </module>
+        <module>
             auth-service
         </module>
         <module>
             menu-service
         </module>
         <module>
-            api-gateway
+            order-service
+        </module>
+        <module>
+            payment-service
         </module>
     </modules>
     <properties>

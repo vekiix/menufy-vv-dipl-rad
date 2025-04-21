@@ -10,5 +10,13 @@ public class Messages {
 
     public static final String MISSING_JWT = "JWT is missing from the request";
     public static final String INVALID_REQUEST_PARAMS = "Given request parameters are not valid";
-    public static final String MISSING_ROLE_RECORD = "Selected role is missing in the database";
+    public static final String MISSING_ROLE_RECORD = "Provided Role ID does not exist";
+    public static final String MISSING_COMPANY_RECORD = "Provided Company ID does not exist";
+    public static final String MISSING_TABLE_RECORD = "Provided Table ID does not exist";
+    public static final String MISSING_USER_RECORD = "Provided User ID does not exist";
+    public static final String MISSING_GUEST_RECORD ="Provided CMAC does not exist" ;
+    public static final String USERNAME_TAKEN_EXCEPTION = "Provided username is already taken";
+    public static final String OIB_TAKEN_EXCEPTION = "Provided Company OIB is already taken";
+    public static final String ACCESS_NOT_ALLOWED = "You do not have permission for this action";
+    public static final String UID_TAKEN_EXCEPTION = "Provided Table UID is already taken";
 }

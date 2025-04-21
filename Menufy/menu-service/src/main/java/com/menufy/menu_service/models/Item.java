@@ -1,47 +1,31 @@
 package com.menufy.menu_service.models;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.util.List;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
+@Document(collection = "items") // Marks this class as a MongoDB document
 public class Item {
+    @MongoId(FieldType.OBJECT_ID)  // Changed from @Id
+    private String id; // Use String for MongoDB ObjectId
 
-    @Id
-    @GeneratedValue( strategy= GenerationType.IDENTITY )
-    private long id;
+    private String name; // Name of the item
 
-    @Column(nullable = false)
-    private String name;
+    private String description; // Description of the item
 
-    @Column(nullable = true)
-    private String description;
+    private String portion; // Portion size of the item
 
-    @Column(nullable = true)
-    private String portion;
+    private float price; // Price of the item
 
-    @Column(nullable = false)
-    private float price;
-
-    @ManyToOne
-    @JoinColumn(name = "currency_currencyCode")
-    private Currency currency;
-
-    @Column(nullable = true)
-    private byte[] image;
-
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-    @ManyToMany(mappedBy = "items")
-    private List<Category> categories;
+    private byte[] image; // Image associated with the item
 }

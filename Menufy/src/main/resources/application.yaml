@@ -1,0 +1,21 @@
+common:
+  sql:
+    auth-service:
+      url: jdbc:postgresql://127.0.0.1:5432/menufy
+      schema: auth_service_schema
+      username: user
+      password: password
+  mongo:
+    menu-service:
+      url: mongodb://root:root@localhost:5433/menufy?authSource=admin
+      database: menu-service
+    order-service:
+      url: mongodb://root:root@localhost:5433/menufy?authSource=admin
+      database: order-service
+  auth:
+    secret: "a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c"
+    publisher: "Menufy"
+    guest-token-length: 1000000000000
+    user-token-length: 8640000000000
+  kafka:
+    bootstrap-servers: kafka:9092

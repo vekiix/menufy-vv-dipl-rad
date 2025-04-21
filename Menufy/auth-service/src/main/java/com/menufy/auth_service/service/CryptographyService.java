@@ -3,26 +3,20 @@ package com.menufy.auth_service.service;
 import com.menufy.auth_service.exceptions.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.util.encoders.Hex;
 import org.springframework.stereotype.Service;
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.Mac;
-import org.bouncycastle.crypto.engines.AESFastEngine;
 import org.bouncycastle.crypto.macs.CMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 import javax.xml.bind.DatatypeConverter;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HexFormat;
 
 @Service
 @RequiredArgsConstructor
 public class CryptographyService {
 
-    public boolean validateCMACForNFCScan(String uid, String counter, String cmac, String encryptionKey) {
-
+    public byte[] calculateCMACValueForPICCData(String uid, String counter, String encryptionKey){
         byte[] kSdm = hexStringToByteArray(encryptionKey);
 
         StringBuilder skvHex = new StringBuilder("3CC300010080" + uid + counter.replaceFirst("^0+", ""));
@@ -32,21 +26,25 @@ public class CryptographyService {
         try {
             byte[] skv = hexStringToByteArray(skvHex.toString());
             byte[] kSes = calculateMFCMAC(kSdm, skv, false);
-            byte[] calculatedCmac = calculateMFCMAC(kSes, new byte[0], true);
 
-            System.out.println(Arrays.toString(skv));
-            System.out.println(Arrays.toString(calculatedCmac));
-            System.out.println(Arrays.toString(hexStringToByteArray(cmac)));
-            return Arrays.equals(calculatedCmac, hexStringToByteArray(cmac));
-        } catch (Exception e) {
+            return calculateMFCMAC(kSes, new byte[0], true);
+        } catch (Exception e){
             throw new InvalidCredentialsException();
         }
+    }
+
+    public boolean validateCMACForNFCScan(String uid, String counter, String cmac, String encryptionKey) {
+            return Arrays.equals(calculateCMACValueForPICCData(uid,counter,encryptionKey), hexStringToByteArray(cmac));
+    }
+
+    public String generateCMACDataForSpecificScan(String uid, int counter, String encryptionKey){
+            return byteArrayToHexString(this.calculateCMACValueForPICCData(uid, intToSixCharHexString(counter), encryptionKey));
     }
 
 
     public byte[] calculateMFCMAC(byte[] key, byte[] valueToMAC, boolean shorten) throws Exception{
             int cmacSize = 16;
-            BlockCipher cipher = new AESFastEngine();
+            BlockCipher cipher = AESEngine.newInstance();
             Mac cmac = new CMac(cipher, cmacSize * 8);
             KeyParameter keyParameter = new KeyParameter(key);
             cmac.init(keyParameter);
@@ -75,5 +73,32 @@ public class CryptographyService {
     private byte[] hexStringToByteArray(String hex) {
         return DatatypeConverter.parseHexBinary(hex);
     }
+
+    private String byteArrayToHexString(byte[] byteArray) {
+        if (byteArray == null || byteArray.length == 0) {
+            throw new IllegalArgumentException("Byte array cannot be null or empty");
+        }
+        return DatatypeConverter.printHexBinary(byteArray).toUpperCase();
+    }
+
+    public int hexToInteger(String hex) {
+        if (hex == null || hex.isEmpty()) {
+            throw new IllegalArgumentException("Hex string cannot be null or empty");
+        }
+
+        try {
+            return Integer.parseInt(hex, 16);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid hex number: " + hex, e);
+        }
+    }
+    public String intToSixCharHexString(int number) {
+        if (number < 0 || number > 0xFFFFFF) {
+            throw new IllegalArgumentException("Number out of range. Must be between 0 and 16777215 (0xFFFFFF).");
+        }
+        return String.format("%06X", number);
+    }
+
+
 
 }

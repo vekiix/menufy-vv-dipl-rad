@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: menu-service
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:5433/menufy?authSource=admin # MongoDB connection URI
+      database: menu-service
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  port: 9001
+
+menu-service:
+  auth-secret: "a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c"
+
+  kafka:
+    url: "localhost:9092"
+    item-topic: "item"

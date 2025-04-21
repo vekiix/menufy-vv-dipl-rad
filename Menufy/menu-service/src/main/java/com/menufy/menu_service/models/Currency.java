@@ -1,26 +1,23 @@
 package com.menufy.menu_service.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
+@Document(collection = "currencies") // Marks this class as a MongoDB document
 public class Currency {
+
     @Id
-    @Column(nullable = false)
     private String currencyCode;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String symbol;
 }

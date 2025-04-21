@@ -1,17 +1,12 @@
 package com.menufy.menu_service.controller;
 
-import com.menufy.menu_service.dto.LanguageCreateRequest;
-import com.menufy.menu_service.dto.LanguageResponse;
-import com.menufy.menu_service.dto.MenuCreateRequest;
-import com.menufy.menu_service.models.Language;
-import com.menufy.menu_service.services.LanguageService;
+import com.menufy.menu_service.dto.MenuResponse;
 import com.menufy.menu_service.services.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 
 @RestController
@@ -20,11 +15,18 @@ import java.util.List;
 public class MenuController {
     private final MenuService menuService;
 
-    @PostMapping
-    public ResponseEntity<Object> createMenu(@RequestBody MenuCreateRequest menuCreateRequest) {
-        try {
-            return new ResponseEntity<>(menuService.addMenu(menuCreateRequest), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }}
+    @GetMapping
+    public ResponseEntity<MenuResponse> getMenuForCompany() {
+        return ResponseEntity.ok(new MenuResponse(menuService.getCompanyMenu()));
+    }
+
+    @GetMapping("/add")
+    public ResponseEntity<MenuResponse> addCategoryToMenu(@RequestParam String category) {
+        return new ResponseEntity<>(new MenuResponse(menuService.addCategoryToMenu(category)), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/remove")
+    public ResponseEntity<MenuResponse> removeCategoryFromMenu(@RequestParam String category) {
+        return new ResponseEntity<>(new MenuResponse(menuService.removeCategoryFromMenu(category)), HttpStatus.CREATED);
+    }
+}

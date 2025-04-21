@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: order-service
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:5433/menufy?authSource=admin # MongoDB connection URI
+      database: order-service
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+server:
+  port: 9002
+
+menu-service:
+  endpoint-url: http://localhost:9001/api/item/
+payment-service:
+  endpoint-url: http://localhost:9003/api/item/
+auth-service:
+  auth-secret: a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c

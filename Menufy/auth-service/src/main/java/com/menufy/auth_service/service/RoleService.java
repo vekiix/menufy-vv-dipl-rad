@@ -1,5 +1,6 @@
 package com.menufy.auth_service.service;
 
+import com.menufy.auth_service.exceptions.MissingRoleException;
 import com.menufy.auth_service.models.Role;
 import com.menufy.auth_service.repository.RoleRepository;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,19 @@ public class RoleService {
         return 0;
     }
 
-    public Optional<Role> getRoleById(int guestRoleId) {
-        return roleRepository.findById(String.valueOf(guestRoleId));
+    public int getUserRoleId(){
+        return 1;
+    }
+
+    public int getAdminRoleId(){
+        return 2;
+    }
+
+    public Role getRoleById(int guestRoleId) {
+        Optional<Role> role = roleRepository.findById(String.valueOf(guestRoleId));
+        if(role.isEmpty()){
+            throw new MissingRoleException();
+        }
+        return role.get();
     }
 }

@@ -20,13 +20,14 @@ public class Company {
     private String companyName;
 
     @NotNull
-    @Size(min = 11, max = 11) // Assuming OIB has exactly 11 digits
+    @Size(min = 11, max = 11)
+    @Column(unique = true)
     private String oib;
 
     @Size(min = 32, max = 32)
     private String encryptionKey;
 
-    private String logo; // Path or URL to the company logo
+    private String logo;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

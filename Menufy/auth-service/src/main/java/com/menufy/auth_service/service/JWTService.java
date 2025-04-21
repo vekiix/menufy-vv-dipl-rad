@@ -1,8 +1,11 @@
 package com.menufy.auth_service.service;
 
+import com.menufy.auth_service.dto.GuestClaims;
+import com.menufy.auth_service.dto.UserClaims;
 import com.menufy.auth_service.exceptions.InvalidJWTException;
 
-import com.menufy.auth_service.models.Table;
+import com.menufy.auth_service.models.CompanyTable;
+import com.menufy.auth_service.models.Guest;
 import com.menufy.auth_service.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,17 +25,17 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-    @Value("${SECRET}")
-    private static final String SECRET = "a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c";
+    @Value("${auth-service.auth-secret}")
+    private String SECRET;
 
-    @Value("${PUBLISHER}")
-    private static final String PUBLISHER = "VV";
+    @Value("${auth-service.publisher}")
+    private String PUBLISHER;
 
-    @Value("${GUEST_TOKEN_LENGTH}")
-    private static final long GUEST_TOKEN_LENGTH = 1000000;
+    @Value("${auth-service.guest-token-length}")
+    private long GUEST_TOKEN_LENGTH;
 
-    @Value("${USER_TOKEN_LENGTH}")
-    private static final long USER_TOKEN_LENGTH = 864_000_000;
+    @Value("${auth-service.user-token-length}")
+    private long USER_TOKEN_LENGTH;
 
     public long getGuestTokenLength(){
         return GUEST_TOKEN_LENGTH;
@@ -58,16 +61,15 @@ public class JWTService {
                 .compact();
     }
 
-    public String generateTokenForGuest(String cmac, Table table, int roleId) {
+    public String generateTokenForGuest(Guest guest) {
         Map<String, Object> claims = new HashMap<>(Map.of());
-        claims.put("id", cmac);
-        claims.put("company", table.getCompany().getId());
-        claims.put("role", roleId);
-        claims.put("table", table.getUid());
+        claims.put("cmac", guest.getCMAC());
+        claims.put("company", guest.getTable().getCompany().getId());
+        claims.put("table", guest.getTable().getUid());
 
         return Jwts
                 .builder()
-                .subject("Guest-" + table.getUid())
+                .subject(guest.getUsername())
                 .issuer(PUBLISHER)
                 .expiration(new Date(System.currentTimeMillis() + GUEST_TOKEN_LENGTH))
                 .claim("guest", claims)
@@ -137,11 +139,13 @@ public class JWTService {
         return extractExpiration(token).before(new Date());
     }
 
-
     public String getUserIdFromClaims(String jwtToken) {
         Claims claims = extractAllClaims(jwtToken);
-        Map<String, Object> userClaims = (Map<String, Object>) claims.get("user");
-        return String.valueOf(userClaims.get("id"));
+        if(isUserToken(jwtToken)){
+            Map<String, Object> userClaims = (Map<String, Object>) claims.get("user");
+            return String.valueOf(userClaims.get("id"));
+        }
+        throw new InvalidJWTException();
     }
 
     public String getTableIdFromClaims(String jwtToken) {
@@ -150,9 +154,41 @@ public class JWTService {
         return String.valueOf(userClaims.get("table"));
     }
 
-    public String getGuestIdFromClaims(String jwtToken) {
+    public String getGuestCmacFromClaims(String jwtToken) {
         Claims claims = extractAllClaims(jwtToken);
         Map<String, Object> userClaims = (Map<String, Object>) claims.get("guest");
-        return String.valueOf(userClaims.get("id"));
+        return String.valueOf(userClaims.get("cmac"));
+    }
+
+    public String getCompanyIdFromClaims(String jwtToken) {
+        Claims claims = extractAllClaims(jwtToken);
+        if(isUserToken(jwtToken)){
+            Map<String, Object> userClaims = (Map<String, Object>) claims.get("user");
+            return String.valueOf(userClaims.get("company"));
+        }
+        if(isGuestToken(jwtToken)){
+            Map<String, Object> userClaims = (Map<String, Object>) claims.get("guest");
+            return String.valueOf(userClaims.get("company"));
+        }
+        throw new InvalidJWTException();
+    }
+
+    public int getRoleIdFromClaims(String jwtToken) {
+        Claims claims = extractAllClaims(jwtToken);
+        if(isUserToken(jwtToken)){
+            Map<String, Object> userClaims = (Map<String, Object>) claims.get("user");
+            return Integer.parseInt(String.valueOf(userClaims.get("role")));
+        }
+        throw new InvalidJWTException();
+    }
+
+    public UserClaims parseUserJWTToken(String jwtToken) {
+        return new UserClaims(extractUserName(jwtToken), getUserIdFromClaims(jwtToken),
+                getCompanyIdFromClaims(jwtToken),getRoleIdFromClaims(jwtToken));
+    }
+
+    public GuestClaims parseGuestJWTToken(String jwtToken) {
+        return new GuestClaims(extractUserName(jwtToken), getGuestCmacFromClaims(jwtToken),
+                getCompanyIdFromClaims(jwtToken),getTableIdFromClaims(jwtToken));
     }
 }

@@ -1,38 +1,49 @@
 package com.menufy.menu_service.models;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Data
-@Entity
+@Document(collection = "menus") // Marks this class as a MongoDB document
 public class Menu implements Serializable {
+    public Menu(){
+        this.categories = new ArrayList<>();
+    }
 
-    @Id
-    @GeneratedValue( strategy= GenerationType.IDENTITY )
-    private long id;
+    @Id // Marks this field as the primary key
+    private String id; // Use String for MongoDB ObjectId
 
-
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-
-    @ManyToMany
-    @JoinTable(
-            name = "Menu_Category",
-            joinColumns = @JoinColumn(name = "menu_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
+    @DBRef // Reference to the Category documents
     private List<Category> categories;
 
+    public void addCategoryToMenu(Category category){
+        if(this.getCategories() == null){
+            this.setCategories(new ArrayList<>());
+        } else if (categories.contains(category)){
+            throw new IllegalArgumentException("Provided Category is already on the Menu");
+        }
+        categories.add(category);
+    }
 
+    public void removeCategoryFromMenu(Category category) {
+        if(this.getCategories() == null){
+            this.setCategories(new ArrayList<>());
+        }
+        if(categories.contains(category)){
+            categories.remove(category);
+            return;
+        }
+        throw new IllegalArgumentException("Provided Category is not on the Menu");
+    }
 }

@@ -1,7 +1,11 @@
 package com.menufy.auth_service.repository;
 
-import com.menufy.auth_service.models.Table;
+import com.menufy.auth_service.models.Company;
+import com.menufy.auth_service.models.CompanyTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TableRepository extends JpaRepository<Table, String> {
+import java.util.List;
+
+public interface TableRepository extends JpaRepository<CompanyTable, String> {
+    List<CompanyTable> findByCompanyId(String companyId);
 }

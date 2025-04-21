@@ -1,1 +1,36 @@
-spring.application.name=api-gateway
+server:
+  port: 9100
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: authentication-service-p9000
+          uri: http://localhost:9000
+          predicates:
+            - Path=/api/**
+        - id: menu-service-p9001
+          uri: http://localhost:9001
+          predicates:
+            - Path=/api/**
+        - id: order-service-p9002
+          uri: http://localhost:9002
+          predicates:
+            - Path=/api/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

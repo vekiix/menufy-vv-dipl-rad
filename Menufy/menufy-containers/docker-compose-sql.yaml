@@ -1,0 +1,16 @@
+version: '4'
+services:
+  db:
+    image: postgres:latest
+    container_name: sqldb
+    environment:
+      POSTGRES_ROOT_PASSWORD: root
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/psql
+
+volumes:
+  db_data:

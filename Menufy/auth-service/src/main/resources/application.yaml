@@ -20,3 +20,13 @@ spring:
         default_schema: auth_service_schema
 server:
   port: 9000
+auth-service:
+  auth-secret: "a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c"
+  publisher: "Menufy"
+  guest-token-length: 1000000000000
+  user-token-length: 8640000000000
+
+  kafka:
+    url: "localhost:9092"
+    company-topic: "company"
+    table-topic: "table"
