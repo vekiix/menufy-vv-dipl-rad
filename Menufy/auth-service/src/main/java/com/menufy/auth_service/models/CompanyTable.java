@@ -18,6 +18,9 @@ public class CompanyTable {
     private String uid;
 
     @Column
+    private  String tableName;
+
+    @Column
     private int scanCount = 0;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

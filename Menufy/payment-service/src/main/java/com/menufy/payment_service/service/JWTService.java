@@ -19,8 +19,8 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-    @Value("${SECRET}")
-    private static final String SECRET = "a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c";
+    @Value("${payment-service.auth-secret}")
+    private String SECRET;
 
 
     public boolean validateToken(String _jwtToken) throws InvalidJWTException {
@@ -130,8 +130,8 @@ public class JWTService {
     }
 
     public UserClaims parseUserJWTToken(String jwtToken) {
-       return new UserClaims(extractUserName(jwtToken), getUserIdFromClaims(jwtToken),
-               getCompanyIdFromClaims(jwtToken),getRoleIdFromClaims(jwtToken));
+        return new UserClaims(extractUserName(jwtToken), getUserIdFromClaims(jwtToken),
+                getCompanyIdFromClaims(jwtToken),getRoleIdFromClaims(jwtToken));
     }
 
     public GuestClaims parseGuestJWTToken(String jwtToken) {

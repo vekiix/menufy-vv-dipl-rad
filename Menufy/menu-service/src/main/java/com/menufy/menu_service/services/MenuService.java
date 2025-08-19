@@ -7,6 +7,10 @@ import com.menufy.menu_service.models.Menu;
 import com.menufy.menu_service.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -16,28 +20,26 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class MenuService {
+    private final MongoTemplate mongoTemplate;
     private final MenuRepository menuRepository;
     private final CompanyService companyService;
 
     public Menu addCategoryToMenu(String _categoryId) {
         BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         Company company = companyService.findCompany(claims.getCompanyId());
 
-        Menu companyMenu = company.getMenu() == null ? new Menu() : company.getMenu();
-        Category category = company.findCategoryFromCategoryList(_categoryId);
+        Category categoryToAdd = company.findCategoryFromCategoryList(_categoryId);
 
-            companyMenu.addCategoryToMenu(category);
-            menuRepository.save(companyMenu);
-            company.setMenu(companyMenu);
-            companyService.saveEntity(company);
+        Query query = new Query(Criteria.where("id").is(company.getMenu().getId()));
+        Update update = new Update().addToSet("categories", categoryToAdd);
 
-            return companyMenu;
+        mongoTemplate.updateFirst(query, update, Menu.class);
+
+        return getCompanyMenu();
     }
 
     public Menu getCompanyMenu() {
         BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(claims.getCompanyId());
 
         return companyService.findCompany(claims.getCompanyId()).getMenu();
     }

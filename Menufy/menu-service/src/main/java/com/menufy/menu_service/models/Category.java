@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-@Builder
 @Data
 @Document(collection = "categories") // Marks this class as a MongoDB document
 public class Category {

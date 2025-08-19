@@ -1,19 +1,28 @@
 spring:
+  kafka:
+    bootstrap-servers: ${ORDER_SERVICE_KAFKA_URL:127.0.0.1:9092}
   application:
-    name: order-service
+    name: ${SPRING_APPLICATION_NAME:order-service}
+
   data:
     mongodb:
-      uri: mongodb://root:root@localhost:5433/menufy?authSource=admin # MongoDB connection URI
-      database: order-service
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:root@13.49.70.191:5433/menufy?authSource=admin}
+      database: ${SPRING_DATA_MONGODB_DATABASE:order-service}
+
   jackson:
     deserialization:
       fail-on-unknown-properties: true
-server:
-  port: 9002
 
-menu-service:
-  endpoint-url: http://localhost:9001/api/item/
+server:
+  port: ${SERVER_PORT:9002}
+
 payment-service:
-  endpoint-url: http://localhost:9003/api/item/
-auth-service:
-  auth-secret: a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c
+  endpoint-url: ${PAYMENT_SERVICE_ENDPOINT_URL:http://localhost:9003/payment}
+
+order-service:
+  auth-secret: ${ORDER_SERVICE_AUTH_SECRET:a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c}
+  kafka:
+    item-topic: ${ORDER_SERVICE_KAFKA_ITEM_TOPIC:item}
+    company-topic: ${ORDER_SERVICE_KAFKA_COMPANY_TOPIC:company}
+    table-topic: ${ORDER_SERVICE_KAFKA_TABLE_TOPIC:table}
+    payment-topic: ${ORDER_SERVICE_KAFKA_PAYMENT_TOPIC:payment}

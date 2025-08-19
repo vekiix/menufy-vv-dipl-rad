@@ -1,19 +1,23 @@
 spring:
   application:
-    name: menu-service
+    name: ${SPRING_APPLICATION_NAME:menu-service}
+  kafka:
+    bootstrap-servers: ${MENU_SERVICE_KAFKA_URL:localhost:9092}
   data:
     mongodb:
-      uri: mongodb://root:root@localhost:5433/menufy?authSource=admin # MongoDB connection URI
-      database: menu-service
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:root@13.49.70.191:5433/menufy?authSource=admin}
+      database: ${SPRING_DATA_MONGODB_DATABASE:menu-service}
+
   jackson:
     deserialization:
       fail-on-unknown-properties: true
+
 server:
-  port: 9001
+  port: ${SERVER_PORT:9001}
 
 menu-service:
-  auth-secret: "a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c"
-
+  auth-secret: ${MENU_SERVICE_AUTH_SECRET:a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c}
   kafka:
-    url: "localhost:9092"
-    item-topic: "item"
+    url: ${MENU_SERVICE_KAFKA_URL:127.0.0.1:9092}
+    item-topic: ${MENU_SERVICE_KAFKA_ITEM_TOPIC:item}
+    company-topic: ${MENU_SERVICE_KAFKA_COMPANY_TOPIC:company}

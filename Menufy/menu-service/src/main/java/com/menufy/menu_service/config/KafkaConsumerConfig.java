@@ -17,14 +17,14 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    @Value("${menu-service.kafka.url}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String KAFKA_URL;
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_URL);
-        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "my-consumer-group");
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,  KAFKA_URL);
+        configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "menu-service-group");
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         return new DefaultKafkaConsumerFactory<>(configProps);

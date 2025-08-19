@@ -14,7 +14,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
 @Document(collection = "companies") // Marks this class as a MongoDB document
 public class Company {
@@ -31,7 +30,7 @@ public class Company {
 
     private String oib;
 
-    @DBRef // Reference to the Item documents
+    @DBRef
     private List<Item> items;
 
     @DBRef
@@ -86,4 +85,11 @@ public class Company {
                 .orElseThrow(() -> new IllegalArgumentException("Category with ID " + categoryId + " not found"));
     }
 
+    public void removeItemFromCompanyItemList(Item item) {
+        if(this.getCategories() == null) {
+            this.setCategories(new ArrayList<>());
+        }
+
+        this.getItems().removeIf(i ->i.getId().equals(item.getId()));
+    }
 }

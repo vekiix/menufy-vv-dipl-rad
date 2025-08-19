@@ -4,9 +4,7 @@ package com.menufy.order_service.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.menufy.order_service.dto.OrderStatus;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -19,11 +17,13 @@ import java.util.List;
 
 
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Data
 @Document(collection = "orders") // Marks this class as a MongoDB document
 public class Order {
+
+    public Order() {
+        this.createdAt = LocalDateTime.now();
+    }
 
     @MongoId(FieldType.OBJECT_ID)  // Changed from @Id
     private String id;
@@ -37,16 +37,19 @@ public class Order {
     private String transactionToken;
 
     @JsonProperty("totalPrice")
-    public float total(){
-        if(lines != null){
-            return BigDecimal.valueOf(lines.stream().mapToDouble(l  -> l.getItem().getPrice() * l.getQuantity()).count())
-                    .setScale(2, RoundingMode.HALF_UP)
-                    .floatValue();
+    public double total() {
+        if (lines != null) {
+            BigDecimal total = lines.stream()
+                    .map(line -> BigDecimal.valueOf(line.getItem().getPrice())
+                            .multiply(BigDecimal.valueOf(line.getQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return total.setScale(2, RoundingMode.HALF_UP).doubleValue();
         }
         return 0;
     }
 
-    private final LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
     private LocalDateTime paidAt;
     private LocalDateTime deliveredAt;
     private List<OrderLine> lines;
@@ -59,18 +62,32 @@ public class Order {
     }
 
     public void markOrderAsDelivered() {
-        if(this.status == OrderStatus.DELIVERED && this.deliveredAt != null) {
-            throw new RuntimeException("Order is already in status Delivered");
+        if(this.status != OrderStatus.IN_PROGRESS) {
+            throw new RuntimeException("Order is in a non valid status");
         }
         this.status = OrderStatus.DELIVERED;
         this.deliveredAt = LocalDateTime.now();
     }
 
     public void markOrderAsPaid() {
-        if(this.status == OrderStatus.PAID && this.paidAt != null) {
-            throw new RuntimeException("Order is already in status Paid");
+        if(this.status != OrderStatus.DELIVERED) {
+            throw new RuntimeException("Order is in a non valid status");
         }
         this.status = OrderStatus.PAID;
         this.paidAt = LocalDateTime.now();
+    }
+
+    public void markOrderAsAccepted() {
+        if(this.status != OrderStatus.ORDERED) {
+            throw new RuntimeException("Order is in non valid status");
+        }
+        this.status = OrderStatus.IN_PROGRESS;
+    }
+
+    public void markOrderAsRejected() {
+        if(this.status != OrderStatus.ORDERED) {
+            throw new RuntimeException("Order is in non valid status");
+        }
+        this.status = OrderStatus.REJECTED;
     }
 }

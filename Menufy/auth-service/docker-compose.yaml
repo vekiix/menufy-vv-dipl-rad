@@ -1,18 +1,29 @@
-version: '4'
-services:
-  db:
-    image: postgres:latest
-    container_name: sqldb
-    environment:
-      POSTGRES_ROOT_PASSWORD: root
-      POSTGRES_DATABASE: auth-service
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_SCHEMA: auth-service
-    ports:
-      - "3306:5432"
-    volumes:
-      - db_data:/var/lib/psql
+version: '3.8'
 
-volumes:
-  db_data:
+services:
+  auth-service:
+    build: .
+    container_name: auth-service
+    ports:
+      - "${SERVER_PORT:-9000}:9000"
+    environment:
+      SERVER_PORT: 9000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: menufy
+      DB_USERNAME: user
+      DB_PASSWORD: password
+      DB_SCHEMA: auth_service_schema
+      HIBERNATE_DDL_AUTO: update
+      AUTH_SECRET: a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c
+      AUTH_PUBLISHER: Menufy
+      GUEST_TOKEN_LENGTH: 1000000000000
+      USER_TOKEN_LENGTH: 8640000000000
+      KAFKA_URL: kafka:9092
+      KAFKA_COMPANY_TOPIC: company
+      KAFKA_TABLE_TOPIC: table
+    networks:
+      - menufy-network
+networks:
+  menufy-network:
+    driver: bridge

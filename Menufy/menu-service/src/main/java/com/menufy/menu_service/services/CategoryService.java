@@ -25,10 +25,9 @@ public class CategoryService {
         BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Company company = companyService.findCompany(claims.getCompanyId());
 
-        Category category = Category.builder()
-                .name(categoryRequest.name())
-                .image(categoryRequest.image())
-                .build();
+        Category category = new Category();
+        category.setName(categoryRequest.name());
+        category.setImage(categoryRequest.image());
 
         categoryRepository.save(category);
         return companyService.addCategoryToCompanyCategoryList(company,category);

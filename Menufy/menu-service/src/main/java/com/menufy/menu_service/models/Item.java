@@ -19,6 +19,8 @@ public class Item {
     @MongoId(FieldType.OBJECT_ID)  // Changed from @Id
     private String id; // Use String for MongoDB ObjectId
 
+    private String companyId;
+
     private String name; // Name of the item
 
     private String description; // Description of the item

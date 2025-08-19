@@ -8,6 +8,7 @@ import com.menufy.auth_service.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,13 +44,11 @@ public class CompanyService {
     }
 
     public Company updateCompany(String companyId,CompanyRequest companyRequest) {
-        //if(companyRepository.findByOib(companyRequest.oib()).isPresent()){
-        //    throw new CompanyOibTakenException();
-        //}
 
         Company company = this.getCompanyById(companyId);
         company.setCompanyName(companyRequest.companyName());
         company.setOib(companyRequest.oib());
+        company.setUpdatedAt(LocalDateTime.now());
         company.setEncryptionKey(companyRequest.encryptionKey());
         company.setLogo(companyRequest.logo());
 

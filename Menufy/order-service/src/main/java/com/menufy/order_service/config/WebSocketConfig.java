@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         System.out.println("registry registered");
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://127.0.0.1:5500") // Allow requests from the React frontend
+                .setAllowedOrigins("http://localhost:3000") // Allow requests from the React frontend
                 .withSockJS();
     }
 

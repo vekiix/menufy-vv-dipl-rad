@@ -1,11 +1,13 @@
 spring:
+  kafka:
+    bootstrap-servers: ${AUTH_SERVICE_KAFKA_URL:localhost:9092}
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/menufy
-    schema: auth_service_schema
-    username: user
-    password: password
+    url: jdbc:postgresql://${DB_HOST:13.49.70.191}:${DB_PORT:5432}/${DB_NAME:menufy}
+    schema: ${DB_SCHEMA:auth_service_schema}
+    username: ${DB_USERNAME:user}
+    password: ${DB_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
   jackson:
     deserialization:
@@ -17,16 +19,14 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        default_schema: auth_service_schema
+        default_schema: ${DB_SCHEMA:auth_service_schema}
 server:
-  port: 9000
+  port: ${SERVER_PORT:9000}
 auth-service:
-  auth-secret: "a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c"
-  publisher: "Menufy"
-  guest-token-length: 1000000000000
-  user-token-length: 8640000000000
-
+  auth-secret: ${AUTH_SERVICE_AUTH_SECRET:a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c}
+  publisher: ${AUTH_SERVICE_AUTH_PUBLISHER:Menufy}
+  guest-token-length: ${AUTH_SERVICE_GUEST_TOKEN_LENGTH:1000000000000}
+  user-token-length: ${AUTH_SERVICE_USER_TOKEN_LENGTH:8640000000000}
   kafka:
-    url: "localhost:9092"
-    company-topic: "company"
-    table-topic: "table"
+    company-topic: ${AUTH_SERVICE_KAFKA_COMPANY_TOPIC:company}
+    table-topic: ${AUTH_SERVICE_KAFKA_TABLE_TOPIC:table}

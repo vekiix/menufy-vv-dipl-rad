@@ -1,16 +1,11 @@
 package com.menufy.payment_service.controller;
 
-import com.menufy.payment_service.dto.PaymentRequest;
-import com.menufy.payment_service.dto.PaymentResponse;
-import com.menufy.payment_service.models.Payment;
+import com.menufy.payment_service.dto.*;
 import com.menufy.payment_service.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/payment")
@@ -18,9 +13,31 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
     private final PaymentService paymentService;
 
-    @PostMapping()
-    public ResponseEntity<PaymentResponse> createPaymentTransaction(@RequestBody PaymentRequest req) {
-        return ResponseEntity.ok(new PaymentResponse(paymentService.createPaymentTransaction(req)));
+    @GetMapping("/{payment}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<PaymentResponse> getPaymentTransaction(@PathVariable String payment){
+        return ResponseEntity.ok(new PaymentResponse(paymentService.findPaymentById(payment)));
     }
+
+    @PostMapping()
+    @ResponseStatus(HttpStatus.OK)
+    public void createPaymentTransaction(@RequestBody OrderDto order) {
+        paymentService.createPaymentTransaction(order);
+    }
+
+    @PostMapping(value = "/{id}", params = "paymentType=KEKS_PAY")
+    public ResponseEntity<PaymentResponse> payForOrder(@PathVariable String id,
+                                                       @RequestParam PaymentType paymentType,
+                                                       @RequestBody KeksPayPaymentDetails paymentDetails) {
+        return ResponseEntity.ok(new PaymentResponse(paymentService.processKeksPayPayment(id, paymentDetails)));
+    }
+
+    @PostMapping(value = "/{id}", params = "paymentType=WS_PAY")
+    public ResponseEntity<PaymentResponse> payForOrder(@PathVariable String id,
+                                                       @RequestParam PaymentType paymentType,
+                                                       @RequestBody  WSPayPaymentDetails paymentDetails) {
+        return ResponseEntity.ok(new PaymentResponse(paymentService.processWSPayPayment(id, paymentDetails)));
+    }
+
 
 }

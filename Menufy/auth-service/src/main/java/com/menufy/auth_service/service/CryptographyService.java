@@ -29,7 +29,7 @@ public class CryptographyService {
 
             return calculateMFCMAC(kSes, new byte[0], true);
         } catch (Exception e){
-            throw new InvalidCredentialsException();
+            throw new RuntimeException(e.getMessage());
         }
     }
 

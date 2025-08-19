@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @ControllerAdvice
 public class CustomExceptionHandler {
 
@@ -46,6 +49,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleGenericException(final Exception ex , final WebRequest wr) {
         ExceptionResponse exceptionResponse = new ExceptionResponse();
+        System.out.println(ex.getMessage());
         exceptionResponse.populateExceptionResponseForGenericException(ex, wr);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
     }
@@ -70,6 +74,4 @@ public class CustomExceptionHandler {
         exceptionResponse.populateExceptionResponseForGenericException(ex, wr);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exceptionResponse);
     }
-
-
 }

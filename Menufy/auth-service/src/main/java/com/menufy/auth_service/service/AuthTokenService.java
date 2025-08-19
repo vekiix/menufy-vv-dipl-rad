@@ -43,7 +43,7 @@ public class AuthTokenService{
         if(cryptographyService.validateCMACForNFCScan(uid,counter,cmac, tableRecord.getCompany().getEncryptionKey())) {
             Guest guest = guestService.createAndInsertGuest(tableRecord, cmac, scanCount);
             tableRecord.updateTableScanCount(scanCount);
-
+            tableService.save(tableRecord);
             return new AnonymousAuthenticationToken(cmac, AuthTokenResponse.createGuestAuthToken(guest,
                     jwtService.generateTokenForGuest(guest),
                     jwtService.getGuestTokenLength()), guest.getAuthorities());
@@ -76,12 +76,17 @@ public class AuthTokenService{
         Map<String,String> urls = new HashMap<>();
 
         tableService.getAllTables().forEach(t -> {
-            String sb = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString() +  "/login" +
+            String sb =
                     "?uid=" + t.getUid() +
                     "&ctr=" + cryptographyService.intToSixCharHexString(t.getScanCount() + 1) +
-                    "&cmac=" + cryptographyService.generateCMACDataForSpecificScan(t.getUid(), t.getScanCount() + 1, t.getCompany().getEncryptionKey());
+                    "&cmac=";
+                    try{
+                        sb = sb + cryptographyService.generateCMACDataForSpecificScan(t.getUid(), t.getScanCount() + 1, t.getCompany().getEncryptionKey());
+                    } catch (Exception e){
+                        sb = sb + "ERROR";
+                    }
 
-            urls.put(t.getCompany() + "-" + t.getUid().toString(), sb);
+            urls.put(t.getCompany() + "::" + t.getUid(), sb);
         });
         return urls;
     }

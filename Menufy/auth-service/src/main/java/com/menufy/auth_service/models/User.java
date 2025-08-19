@@ -31,7 +31,7 @@ public class User implements UserDetails{
     private String username;
 
     @NotNull
-    @Size(min = 8) // Enforce password security rules
+    @Size(min = 8, message = "Password must be at least 8 characters long") // Enforce password security rules
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

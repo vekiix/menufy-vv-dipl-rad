@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class JWTService {
 
-    @Value("${auth-service.auth-secret}")
+    @Value("${order-service.auth-secret}")
     private String SECRET;
 
     public boolean validateToken(String _jwtToken) throws InvalidJWTException {

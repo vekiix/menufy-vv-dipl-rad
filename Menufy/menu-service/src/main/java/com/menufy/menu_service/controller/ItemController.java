@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/item")
+@RequestMapping("/item")
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
@@ -31,16 +31,10 @@ public class ItemController {
     }
 
     @PutMapping
-    public ResponseEntity<ItemResponse> updateProduct(@RequestParam String itemId, @RequestBody ItemRequest itemRequest){
-        Item item = itemService.updateItem(itemId, itemRequest);
-        kafkaProducerService.sendItem(DataAction.UPDATE, item);
-        return new ResponseEntity<>(new ItemResponse(item),HttpStatus.CREATED);
-    }
-
-    @PostMapping("/find")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<ItemsResponse> findProducts(@RequestBody List<String> itemIds) {
-        return new ResponseEntity<>(new ItemsResponse(itemService.findItemsFromIdList(itemIds)), HttpStatus.CREATED);
+    public ResponseEntity<ItemResponse> updateProduct(@RequestParam String item, @RequestBody ItemRequest itemRequest){
+        Item updatedItem = itemService.updateItem(item, itemRequest);
+        kafkaProducerService.sendItem(DataAction.UPDATE, updatedItem);
+        return new ResponseEntity<>(new ItemResponse(updatedItem),HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
@@ -56,9 +50,9 @@ public class ItemController {
     }
 
     @DeleteMapping
-    public ResponseEntity<ItemsResponse> deleteProduct(@RequestParam String id){
-        Item itemToDelete = itemService.findItemById(id);
-        List<Item> itemsList = itemService.deleteItem(id);
+    public ResponseEntity<ItemsResponse> deleteProduct(@RequestParam String item){
+        Item itemToDelete = itemService.findItemById(item);
+        List<Item> itemsList = itemService.deleteItem(item);
         kafkaProducerService.sendItem(DataAction.DELETE, itemToDelete);
         return new ResponseEntity<>(new ItemsResponse(itemsList), HttpStatus.OK);
     }

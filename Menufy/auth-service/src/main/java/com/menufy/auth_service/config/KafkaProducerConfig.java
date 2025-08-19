@@ -1,6 +1,7 @@
 package com.menufy.auth_service.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,19 +18,19 @@ import java.util.Map;
 @Configuration
 public class KafkaProducerConfig {
 
-    @Value("${auth-service.kafka.url}")
-    private String KAFKA_URL;
-
     @Value("${auth-service.kafka.company-topic}")
     private String COMPANY_TOPIC;
 
     @Value("${auth-service.kafka.table-topic}")
     private String TABLE_TOPIC;
 
+    @Value("${spring.kafka.bootstrap-servers}")
+    private String KAFKA_URL;
+
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA_URL);
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,  KAFKA_URL);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return new DefaultKafkaProducerFactory<>(configProps);

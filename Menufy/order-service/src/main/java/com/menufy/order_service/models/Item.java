@@ -17,13 +17,10 @@ public class Item {
     @MongoId(FieldType.OBJECT_ID)  // Changed from @Id
     private String id; // Use String for MongoDB ObjectId
 
+    private String companyId;
+
     private String name; // Name of the item
-
-    private String description; // Description of the item
-
-    private String portion; // Portion size of the item
 
     private float price; // Price of the item
 
-    private byte[] image; // Image associated with the item
 }

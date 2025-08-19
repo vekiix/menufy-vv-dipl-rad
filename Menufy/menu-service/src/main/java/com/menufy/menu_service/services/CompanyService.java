@@ -1,11 +1,13 @@
 package com.menufy.menu_service.services;
 
+import com.menufy.menu_service.dto.BaseClaims;
 import com.menufy.menu_service.dto.CompanyDto;
 import com.menufy.menu_service.models.Category;
 import com.menufy.menu_service.models.Company;
 import com.menufy.menu_service.models.Item;
 import com.menufy.menu_service.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +32,13 @@ public class CompanyService {
         return company.getItems();
     }
 
+    public List<Item> deleteItemFromCompanyItemList(Item item) {
+        BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Company company = this.findCompany(claims.getCompanyId());
+        company.removeItemFromCompanyItemList(item);
+        return companyRepository.save(company).getItems();
+    }
+
     public List<Category> addCategoryToCompanyCategoryList(Company company, Category category) {
         company.addCategoryToCategoryList(category);
         companyRepository.save(company);
@@ -37,8 +46,7 @@ public class CompanyService {
     }
 
     public Item findItemById(String itemId, String companyId) {
-        Company companyVal = this.findCompany(companyId);
-        return companyVal.findItemFromItemList(itemId);
+        return  this.findCompany(companyId).findItemFromItemList(itemId);
     }
 
     public Category findCategoryById(String categoryId, String companyId) {
@@ -69,4 +77,6 @@ public class CompanyService {
         Company company = findCompany(_company.id);
         companyRepository.delete(company);
     }
+
+
 }

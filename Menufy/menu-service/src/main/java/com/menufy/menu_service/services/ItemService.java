@@ -31,6 +31,7 @@ public class ItemService {
                 .portion(itemRequest.portion())
                 .image(itemRequest.image())
                 .price(itemRequest.price())
+                .companyId(company.getId())
                 .build();
 
         itemRepository.save(item);
@@ -47,13 +48,21 @@ public class ItemService {
     public List<Item> deleteItem(String itemId) {
         BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Item item = companyService.findItemById(itemId, claims.getCompanyId());
-        itemRepository.deleteById(itemId);
-        return getAllItems();
+        itemRepository.delete(item);
+        return companyService.deleteItemFromCompanyItemList(item);
     }
 
     public Item updateItem(String itemId, ItemRequest itemRequest) {
         BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // This must return the correct Item object with the _id field populated!
         Item item = companyService.findItemById(itemId, claims.getCompanyId());
+
+        if (item == null || item.getId() == null) {
+            throw new IllegalArgumentException("Item not found or ID is missing");
+        }
+
+        log.info("Updating Item with id: {}", item.getId());
 
         item.setName(itemRequest.name());
         item.setDescription(itemRequest.description());
@@ -61,23 +70,10 @@ public class ItemService {
         item.setImage(itemRequest.image());
         item.setPrice(itemRequest.price());
 
-
-            return itemRepository.save(item);
-
-
+        itemRepository.save(item);
+        return item;
     }
 
-    public List<Item> findItemsFromIdList(List<String> itemIds) {
-        BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        List<Item> items = new ArrayList<>();
-
-        itemIds.forEach(item -> {
-            items.add(companyService.findItemById(item, claims.getCompanyId()));
-        });
-
-        return items;
-    }
 
     public Item findItemById(String id) {
         BaseClaims claims = (BaseClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

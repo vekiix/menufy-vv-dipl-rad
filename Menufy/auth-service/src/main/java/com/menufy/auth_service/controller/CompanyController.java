@@ -27,6 +27,11 @@ public class CompanyController {
         return ResponseEntity.ok(new CompaniesResponse(companyService.getAllCompanies()));
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<CompaniesResponse> getCompanyInfo(){
+        return ResponseEntity.ok(new CompaniesResponse(companyService.getAllCompanies()));
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CompanyResponse> createCompany(@RequestBody CompanyRequest companyRequest){

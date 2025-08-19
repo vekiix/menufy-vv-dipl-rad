@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/category")
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
@@ -33,18 +33,18 @@ public class CategoryController {
     }
 
     @DeleteMapping
-    public ResponseEntity<CategoriesResponse> DeleteCategory(@RequestParam String id){
-        return new ResponseEntity<>(new CategoriesResponse(categoryService.deleteCategory(id)),HttpStatus.OK);
+    public ResponseEntity<CategoriesResponse> DeleteCategory(@RequestParam String category){
+        return new ResponseEntity<>(new CategoriesResponse(categoryService.deleteCategory(category)),HttpStatus.OK);
     }
 
     @GetMapping("/add")
-    public ResponseEntity<Category> addItemToCategory(@RequestParam String category, @RequestParam String item){
-        return new ResponseEntity<>(categoryService.addItemToCategory(item, category), HttpStatus.CREATED);
+    public ResponseEntity<CategoryResponse> addItemToCategory(@RequestParam String category, @RequestParam String item){
+        return new ResponseEntity<>(new CategoryResponse(categoryService.addItemToCategory(item, category)), HttpStatus.CREATED);
     }
 
     @GetMapping("/remove")
-    public ResponseEntity<Category> removeItemFromCategory(@RequestParam String category, @RequestParam String item){
-        return new ResponseEntity<>(categoryService.removeItemFromCategory(item, category), HttpStatus.CREATED);
+    public ResponseEntity<CategoryResponse> removeItemFromCategory(@RequestParam String category, @RequestParam String item){
+        return new ResponseEntity<>(new CategoryResponse(categoryService.removeItemFromCategory(item, category)), HttpStatus.CREATED);
     }
 }
 

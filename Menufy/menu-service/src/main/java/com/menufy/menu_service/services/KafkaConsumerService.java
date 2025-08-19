@@ -16,31 +16,25 @@ import org.springframework.kafka.annotation.KafkaListener;
 public class KafkaConsumerService {
 
     @Value("${menu-service.kafka.company-topic}")
-    private static final String COMPANY_TOPIC = "company";
+    private final String COMPANY_TOPIC = "company";
 
     private final CompanyService companyService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @KafkaListener(topics = COMPANY_TOPIC, groupId = "my-consumer-group")
+    @KafkaListener(topics = "${menu-service.kafka.company-topic}", groupId = "menu-service-group")
     public void listen(String value,
                        @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
         try {
-            switch (topic)
-            {
-                case COMPANY_TOPIC -> {
-                    System.out.println(String.format("Consumed event from topic '%s': value = %s", topic, value));
-                    CompanyChangeDto dto = objectMapper.readValue(objectMapper.readValue(value, String.class), CompanyChangeDto.class);
-                    switch (dto.operation)
-                    {
-                        case DataAction.CREATE -> companyService.createOrUpdate(dto.company);
-                        case DataAction.UPDATE -> companyService.createOrUpdate(dto.company);
-                        case DataAction.DELETE -> companyService.deleteCompany(dto.company);
-                    }
+            if (topic.equals(COMPANY_TOPIC)) {
+                System.out.println(String.format("Consumed event from topic '%s': value = %s", topic, value));
+                CompanyChangeDto dto = objectMapper.readValue(objectMapper.readValue(value, String.class), CompanyChangeDto.class);
+                switch (dto.operation) {
+                    case DataAction.CREATE, DataAction.UPDATE -> companyService.createOrUpdate(dto.company);
+                    case DataAction.DELETE -> companyService.deleteCompany(dto.company);
                 }
             }
 
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
             throw new RuntimeException("There was a problem with parsing company object from Kafka pipeline");
         }
 

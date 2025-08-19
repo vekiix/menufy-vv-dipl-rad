@@ -29,7 +29,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         if (token != null && token.startsWith("Bearer ")) {
             String[] authElements = token.split(" ");
             try {
@@ -38,8 +37,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
                 throw e;
             }
-        } else if (!Pattern.matches("^/ws.*", request.getRequestURI())){
-            System.out.println(request.getRequestURI());
+        } else if(!request.getRequestURI().startsWith("/ws")) {
             throw new JWTMissingException();
         }
 

@@ -1,20 +1,28 @@
 spring:
+  kafka:
+    bootstrap-servers: ${PAYMENT_SERVICE_KAFKA_URL:127.0.0.1:9092}
   application:
-    name: payment-service
+    name: ${SPRING_APPLICATION_NAME:payment-service}
   data:
     mongodb:
-    uri: mongodb://root:root@localhost:5433/menufy?authSource=admin # MongoDB connection URI
-    database: payment-service
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:root@13.49.70.191:5433/menufy?authSource=admin}
+      database: ${SPRING_DATA_MONGODB_DATABASE:payment-service}
+
   jackson:
     deserialization:
       fail-on-unknown-properties: true
+
 server:
-  port: 9003
+  port: ${SERVER_PORT:9003}
 
 payment-service:
+  auth-secret: ${PAYMENT_SERVICE_AUTH_SECRET:a80760fd40fe446efdb63087307211907f408cd188221009b37681d491b3672c}
+  kafka:
+    payment-topic: ${PAYMENT_SERVICE_KAFKA_PAYMENT_TOPIC:payment}
+    company-topic: ${PAYMENT_SERVICE_KAFKA_COMPANY_TOPIC:company}
   keks-pay:
-    success-url: localhost
-    fail-ur: localhostFail
+    success-url: ${KEKS_PAY_SUCCESS_URL:localhost}
+    fail-ur: ${KEKS_PAY_FAIL_URL:localhostFail}
   ws-pay:
-    success-url: localhost
-    fail-ur: localhostFail
+    success-url: ${WS_PAY_SUCCESS_URL:localhost}
+    fail-ur: ${WS_PAY_FAIL_URL:localhostFail}

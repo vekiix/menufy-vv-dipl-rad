@@ -11,7 +11,7 @@ public class ItemChangeDto {
 
     public ItemChangeDto(DataAction _operation, Item _item) {
         this.operation = _operation;
-        this.item = new ItemDto(_item.getId(), _item.getName(), _item.getPrice());
+        this.item = new ItemDto(_item.getId(), _item.getCompanyId(),_item.getName(), _item.getPrice());
     }
 
     @Override

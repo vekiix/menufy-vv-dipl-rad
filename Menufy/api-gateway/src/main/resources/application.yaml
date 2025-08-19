@@ -1,25 +1,36 @@
 server:
-  port: 9100
+  port: ${SERVER_PORT:9100}
 
 spring:
   application:
-    name: api-gateway
+    name: ${SPRING_APPLICATION_NAME:api-gateway}
   cloud:
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
-        - id: authentication-service-p9000
-          uri: http://localhost:9000
+        - id: authentication-service
+          uri: ${AUTH_SERVICE_URL:http://127.0.0.1:9000}
           predicates:
-            - Path=/api/**
-        - id: menu-service-p9001
-          uri: http://localhost:9001
+            - Path=/login/**, /company/**, /table/**, /user/**
+        - id: menu-service
+          uri: ${MENU_SERVICE_URL:http://127.0.0.1:9001}
           predicates:
-            - Path=/api/**
-        - id: order-service-p9002
-          uri: http://localhost:9002
+            - Path=/menu/**, /category/**, /item/**
+        - id: order-service
+          uri: ${ORDER_SERVICE_URL:http://127.0.0.1:9002}
           predicates:
-            - Path=/api/**
-
+            - Path=/order/**, /ws/**
+        - id: payment-service
+          uri: ${PAYMENT_SERVICE_URL:http://127.0.0.1:9003}
+          predicates:
+            - Path=/payment/**
 management:
   endpoints:
     web:

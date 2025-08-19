@@ -31,7 +31,6 @@ public class LoginController {
     }
 
     @PostMapping()
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<AuthTokenResponse> authenticateUserFromCredentials(@AuthenticationPrincipal AuthTokenResponse
                                                                                          authTokenResponse) {
         return ResponseEntity.ok(authTokenResponse);

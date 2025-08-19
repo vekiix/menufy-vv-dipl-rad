@@ -35,12 +35,11 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> { request
-                        .requestMatchers(HttpMethod.GET, "/api/item", "/api/category", "/api/menu", "/api/item/**").hasAnyAuthority("USER", "GUEST")
-                        .requestMatchers(HttpMethod.GET, "/api/category/**", "/api/menu/**").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/item", "/api/category").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.POST, "/api/item", "/api/category").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/item", "/api/category").hasAuthority("USER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/user", "/api/company").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/menu").hasAnyAuthority("GUEST", "USER")
+                        .requestMatchers(HttpMethod.GET, "/category**", "/menu**", "/item**").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.PUT, "/item", "/category").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.POST, "/item", "/category").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/item", "/category").hasAuthority("USER")
                         .anyRequest().authenticated();
                 })
                 .addFilterBefore(new JWTAuthenticationFilter(authTokenService), UsernamePasswordAuthenticationFilter.class)

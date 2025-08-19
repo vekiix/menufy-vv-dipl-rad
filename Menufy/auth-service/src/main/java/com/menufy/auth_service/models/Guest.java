@@ -53,7 +53,7 @@ public class Guest implements UserDetails{
 
     @Override
     public String getUsername() {
-        return "";
+        return getCMAC();
     }
 
 

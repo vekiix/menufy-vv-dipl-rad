@@ -5,6 +5,7 @@ import com.menufy.auth_service.dto.*;
 import com.menufy.auth_service.models.User;
 import com.menufy.auth_service.service.KafkaProducerService;
 import com.menufy.auth_service.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserResponse> createNewUser(@RequestBody UserRequest userRequest){
+    public ResponseEntity<UserResponse> createNewUser(@Valid @RequestBody UserRequest userRequest){
         return ResponseEntity.ok(new UserResponse(userService.createUser(userRequest)));
     }
 

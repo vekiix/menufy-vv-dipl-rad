@@ -54,14 +54,15 @@ public class UserService {
         user.setUsername(userRequest.username());
         user.setRole(roleService.getRoleById(userRequest.roleId()));
         user.setCompany(companyService.getCompanyById(userRequest.companyId()));
-        user.setPassword(HelperUtil.generatePassword(8));
-        return  userRepository.save(user);
+        user.setPassword(userRequest.password());
+        return userRepository.save(user);
     }
 
     public User updateUser(String userId, UserRequest userRequest){
         User user = this.findUserById(userId);
         user.setUsername(userRequest.username());
         user.setCompany(companyService.getCompanyById(userRequest.companyId()));
+        user.setPassword(userRequest.password());
         user.setRole(roleService.getRoleById(userRequest.roleId()));
 
         return userRepository.save(user);

@@ -5,7 +5,6 @@ import com.menufy.auth_service.dto.DataAction;
 import com.menufy.auth_service.dto.TableChangeDto;
 import com.menufy.auth_service.models.Company;
 import com.menufy.auth_service.models.CompanyTable;
-import jakarta.persistence.Table;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

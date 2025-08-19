@@ -7,6 +7,7 @@ import com.menufy.auth_service.exceptions.TableUIDTakenException;
 import com.menufy.auth_service.models.CompanyTable;
 import com.menufy.auth_service.repository.TableRepository;
 import com.menufy.auth_service.utils.Messages;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class TableService {
 
         UserClaims claims = (UserClaims) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         CompanyTable table = new CompanyTable();
+        table.setTableName(tableRequest.tableName());
         table.setUid(tableRequest.uid());
         table.setCompany(companyService.getCompanyById(claims.getCompanyId()));
         return tableRepository.save(table);
@@ -52,8 +54,8 @@ public class TableService {
 
     public CompanyTable updateCompanyTable(String tableId, TableRequest tableRequest){
         CompanyTable table = this.findTableByUID(tableId);
-
-        table.setUid(tableRequest.uid());
+        //table.setUid(tableRequest.uid());
+        table.setTableName(tableRequest.tableName());
         return tableRepository.save(table);
     }
 
@@ -65,5 +67,9 @@ public class TableService {
             return this.getAllCompanyTables();
         }
         throw new IllegalArgumentException(Messages.ACCESS_NOT_ALLOWED);
+    }
+
+    public void save(CompanyTable table) {
+        tableRepository.save(table);
     }
 }
