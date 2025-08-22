@@ -59,7 +59,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       return { success: true };
       
     } catch (error) {
-      const errorMessage = `Login failed: ${error}`;
+      const errorMessage = `Login failed: ${error instanceof Error ? error.message : String(error)}`;
       return { success: false, error: errorMessage };
     }
   }, []);
@@ -71,6 +71,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       await signOut({ redirect: true, callbackUrl: '/redirect' });
     } catch (error) {
       // Still try to clear cart even if signOut fails
+      console.error("Logout error:", error);
       cartStorageManager.clearCartFromStorage();
       window.location.assign('/redirect');
     }

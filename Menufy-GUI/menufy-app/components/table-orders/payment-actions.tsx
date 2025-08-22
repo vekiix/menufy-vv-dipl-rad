@@ -117,6 +117,7 @@ export function PaymentActions({
       
     } catch (error) {
       // Handle different error types
+      console.error("Payment error:", error);
       showToast("Failed to initiate payment. Please try again.", "error")
     } finally {
       setIsPaymentLoading(false)

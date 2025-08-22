@@ -28,6 +28,21 @@ const nextConfig: NextConfig = {
   // Enable compression
   compress: true,
   
+  // Webpack configuration to handle Node.js modules in browser environment
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Provide polyfills for Node.js modules when bundling for the client
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        "websocket": require.resolve("websocket"),
+        "ws": require.resolve("ws"),
+        "net": require.resolve("net"),
+        "tls": require.resolve("tls"),
+        "fs": require.resolve("fs"),
+      };
+    }
+    return config;
+  },
   
   // Bundle analyzer (comment out for production)
   // bundleAnalyzer: {
