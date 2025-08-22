@@ -1,0 +1,101 @@
+# ==============================================
+# Menufy Application Environment Configuration
+# ==============================================
+# Copy this file to .env and update the values
+
+# ==============================================
+# APPLICATION SETTINGS
+# ==============================================
+
+# Node.js environment
+NODE_ENV=production
+
+# Application URL (used by NextAuth)
+NEXTAUTH_URL=https://your-domain.com
+
+# NextAuth secret for JWT signing (generate with: openssl rand -base64 32)
+NEXTAUTH_SECRET=your-super-secret-jwt-key-here-change-this-in-production
+
+# ==============================================
+# BACKEND API CONFIGURATION
+# ==============================================
+
+# Main API URL (adjust based on your backend deployment)
+API_URL=http://menufy-backend:9100
+
+# WebSocket URL for real-time features
+API_WS_URL=http://menufy-backend:9002/ws
+
+# ==============================================
+# DATABASE CONFIGURATION (if needed)
+# ==============================================
+
+# Redis configuration for session storage and caching
+REDIS_PASSWORD=menufy-redis-pass-change-this
+REDIS_URL=redis://redis:6379
+
+# ==============================================
+# SSL CONFIGURATION (for production)
+# ==============================================
+
+# Domain name for SSL certificate
+DOMAIN_NAME=your-domain.com
+
+# SSL certificate paths (when using custom certificates)
+SSL_CERT_PATH=/etc/nginx/ssl/cert.pem
+SSL_KEY_PATH=/etc/nginx/ssl/key.pem
+
+# ==============================================
+# MONITORING & LOGGING
+# ==============================================
+
+# Enable/disable telemetry
+NEXT_TELEMETRY_DISABLED=1
+
+# Log level (error, warn, info, debug)
+LOG_LEVEL=info
+
+# ==============================================
+# SECURITY SETTINGS
+# ==============================================
+
+# CORS allowed origins (comma-separated)
+ALLOWED_ORIGINS=https://your-domain.com,https://www.your-domain.com
+
+# Rate limiting settings
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_REQUESTS_PER_MINUTE=60
+
+# ==============================================
+# PERFORMANCE SETTINGS
+# ==============================================
+
+# Enable/disable caching
+CACHE_ENABLED=true
+
+# Cache TTL in seconds
+CACHE_TTL=3600
+
+# ==============================================
+# DOCKER COMPOSE OVERRIDES
+# ==============================================
+
+# Custom Docker Compose project name
+COMPOSE_PROJECT_NAME=menufy
+
+# Docker registry (if using private registry)
+DOCKER_REGISTRY=your-registry.com
+
+# Image tag
+IMAGE_TAG=latest
+
+# ==============================================
+# DEVELOPMENT OVERRIDES
+# ==============================================
+
+# Development mode overrides (uncomment for dev)
+# NODE_ENV=development
+# API_URL=http://localhost:9100
+# API_WS_URL=http://localhost:9002/ws
+# NEXTAUTH_URL=http://localhost:3000
+

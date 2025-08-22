@@ -1,0 +1,47 @@
+# Development-specific overrides for docker-compose.yml
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+version: '3.8'
+
+services:
+  menufy-app:
+    build:
+      target: deps  # Use deps stage for faster development builds
+    environment:
+      - NODE_ENV=development
+      - API_URL=http://api-gateway:9100
+      - API_WS_URL=http://order-service:9002/ws
+      - NEXTAUTH_URL=http://localhost:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    
+  nginx:
+    # Remove SSL and use simpler config for development
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d/menufy.dev.conf:/etc/nginx/conf.d/default.conf:ro
+
+  # Development tools
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: menufy-redis-commander
+    restart: unless-stopped
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8081:8081"
+    networks:
+      - menufy-network
+    depends_on:
+      - redis
+networks:
+  menufy-network:
+    driver: bridge
+

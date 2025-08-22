@@ -1,12 +1,19 @@
 import type { Config } from "tailwindcss";
 
 export default {
-    darkMode: ["class"],
-    content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+content: [
+  "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  "./components/**/*.{js,ts,jsx,tsx,mdx}",
+],
+safelist: [
+  // Order status border colors
+  'border-l-orange-500',
+  'border-l-yellow-500', 
+  'border-l-blue-500',
+  'border-l-green-500',
+  'border-l-red-500',
+  'border-l-gray-500'
+],
 theme: {
 	extend: {
 		colors: {
@@ -84,5 +91,4 @@ theme: {
 	}
 },
   
-  plugins: [require("tailwindcss-animate")],
 } satisfies Config;
