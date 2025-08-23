@@ -44,7 +44,7 @@ check_prerequisites() {
         exit 1
     fi
     
-    if ! command_exists docker-compose; then
+    if ! command_exists docker compose; then
         print_error "Docker Compose is not installed. Please install Docker Compose first."
         exit 1
     fi
@@ -118,10 +118,10 @@ deploy_app() {
     print_status "Deploying Menufy application..."
     
     # Stop existing containers
-    docker-compose down --remove-orphans
+    docker compose down --remove-orphans
     
     # Build and start services
-    docker-compose up -d --build
+    docker compose up -d --build
     
     print_success "Application deployed successfully!"
 }
@@ -134,10 +134,10 @@ check_health() {
     sleep 30
     
     # Check if containers are running
-    if docker-compose ps | grep -q "Up"; then
+    if docker compose ps | grep -q "Up"; then
         print_success "All services are running!"
     else
-        print_error "Some services failed to start. Check logs with: docker-compose logs"
+        print_error "Some services failed to start. Check logs with: docker compose logs"
         exit 1
     fi
     
@@ -159,10 +159,10 @@ show_status() {
     echo "Health Check: http://$DOMAIN_NAME/api/health"
     echo ""
     echo "Container Status:"
-    docker-compose ps
+    docker compose ps
     echo ""
-    echo "To view logs: docker-compose logs -f"
-    echo "To stop: docker-compose down"
+    echo "To view logs: docker compose logs -f"
+    echo "To stop: docker compose down"
     echo "To restart: docker-compose restart"
 }
 

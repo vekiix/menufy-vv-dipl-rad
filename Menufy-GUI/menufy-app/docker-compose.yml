@@ -1,57 +1,62 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  # Next.js Application
   menufy-app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: menufy-app
-    restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      - NEXTAUTH_URL=${NEXTAUTH_URL:-https://your-domain.com}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - API_URL=${API_URL:-http://menufy-backend:9100}
-      - API_WS_URL=${API_WS_URL:-http://menufy-backend:9002/ws}
-      - NEXT_TELEMETRY_DISABLED=1
     ports:
       - "3000:3000"
-    networks:
-      - menufy-network
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      # Add your environment variables here
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=TExSPfh/fMPw5mi3HfYKN+/EcKQQebM8OXYpwgGX6W0=
+      - API_URL=http://localhost:9100
+      - API_WS_URL=ws://localhost:9002/ws
+      - DOMAIN_NAME=localhost
+      - NEXT_TELEMETRY_DISABLED=1
+      - LOG_LEVEL=info
+      - ALLOWED_ORIGINS=http://localhost:3000
+      - RATE_LIMIT_ENABLED=true
+      - RATE_LIMIT_REQUESTS_PER_MINUTE=60
+      - CACHE_ENABLED=true
+      - CACHE_TTL=3600
+    volumes:
+      # Mount environment file if you want to use external config
+      - ./env.production:/app/.env.production:ro
+    restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:1.25-alpine
-    container_name: menufy-nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - ./nginx/logs:/var/log/nginx
-    depends_on:
-      - menufy-app
     networks:
       - menufy-network
-    healthcheck:
-      test: ["CMD", "nginx", "-t"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
 
-
+  # Optional: Add a reverse proxy with Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: menufy-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - menufy-app
+    restart: unless-stopped
+    networks:
+      - menufy-network
 
 networks:
   menufy-network:
     driver: bridge
 
 volumes:
-  nginx-logs:
+  menufy-app-data:

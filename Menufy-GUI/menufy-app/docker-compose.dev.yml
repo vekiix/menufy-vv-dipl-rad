@@ -1,0 +1,36 @@
+services:
+  menufy-app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: menufy-app-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      # Development environment variables
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=TExSPfh/fMPw5mi3HfYKN+/EcKQQebM8OXYpQQebM8OXYpwgGX6W0=
+      - API_URL=http://localhost:9100
+      - API_WS_URL=ws://localhost:9002/ws
+      - DOMAIN_NAME=localhost
+      - NEXT_TELEMETRY_DISABLED=1
+      - LOG_LEVEL=debug
+      - ALLOWED_ORIGINS=http://localhost:3000
+      - RATE_LIMIT_ENABLED=false
+      - CACHE_ENABLED=false
+    volumes:
+      # Mount source code for hot reloading
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
+    command: npm run dev
+    networks:
+      - menufy-dev-network
+
+networks:
+  menufy-dev-network:
+    driver: bridge

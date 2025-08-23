@@ -27,32 +27,6 @@ This guide will help you deploy your Menufy application on a VPS using Docker an
 sudo apt update && sudo apt upgrade -y
 ```
 
-### 1.2 Install Docker
-```bash
-# Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-
-# Add user to docker group
-sudo usermod -aG docker $USER
-
-# Start and enable Docker
-sudo systemctl start docker
-sudo systemctl enable docker
-
-# Logout and login again for group changes to take effect
-```
-
-### 1.3 Install Docker Compose
-```bash
-# Install Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-# Verify installation
-docker-compose --version
-```
-
 ### 1.4 Install Additional Tools
 ```bash
 # Install essential tools
